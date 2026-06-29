@@ -69,10 +69,7 @@ const NAV = [
   "Shop",
   "Collections",
   "Wedding",
-  "Festive",
-  "Our Craft",
   "About",
-  "Journal",
   "Contact"
 ];
 
@@ -397,34 +394,32 @@ function Home() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Preloader timeout
+  // Preloader timeout (Highly energetic 850ms)
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1500);
+    }, 850);
     return () => clearTimeout(timer);
   }, []);
 
-  // Trigger top bar loader on filter and sorting changes
+  // Trigger top bar loader on filter and sorting changes (Fast 250ms feedback cycle)
   useEffect(() => {
     if (isLoading) return;
     
     setIsBoutiqueLoading(true);
-    setLoadProgress(15);
-    const t1 = setTimeout(() => setLoadProgress(45), 150);
-    const t2 = setTimeout(() => setLoadProgress(75), 300);
-    const t3 = setTimeout(() => {
+    setLoadProgress(30);
+    const t1 = setTimeout(() => setLoadProgress(75), 80);
+    const t2 = setTimeout(() => {
       setLoadProgress(100);
-      setTimeout(() => {
+      const t3 = setTimeout(() => {
         setIsBoutiqueLoading(false);
         setLoadProgress(0);
-      }, 150);
-    }, 450);
+      }, 80);
+    }, 180);
 
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
-      clearTimeout(t3);
     };
   }, [selectedCategory, selectedColor, selectedFabric, selectedPriceRange, sortBy, isLoading]);
 
@@ -623,19 +618,19 @@ function Home() {
         {/* Loader styles inline for safety */}
         <style dangerouslySetInnerHTML={{__html: `
           @keyframes luxuryPreloader {
-            0% { transform: scale(0.95); opacity: 0.7; }
-            50% { transform: scale(1.03); opacity: 1; }
-            100% { transform: scale(0.95); opacity: 0.7; }
+            0% { transform: scale(0.97); opacity: 0.8; }
+            50% { transform: scale(1.03); opacity: 1; filter: drop-shadow(0 0 12px rgba(200, 165, 74, 0.5)); }
+            100% { transform: scale(0.97); opacity: 0.8; }
           }
           @keyframes luxuryPulseRing {
-            0% { transform: scale(0.8); opacity: 0.8; }
-            100% { transform: scale(1.4); opacity: 0; }
+            0% { transform: scale(0.7); opacity: 0.9; border-width: 2px; }
+            100% { transform: scale(1.4); opacity: 0; border-width: 1px; }
           }
           .animate-luxury-preloader {
-            animation: luxuryPreloader 2.5s infinite ease-in-out;
+            animation: luxuryPreloader 1s infinite ease-in-out;
           }
           .animate-luxury-ring {
-            animation: luxuryPulseRing 2s infinite cubic-bezier(0.2, 0.8, 0.2, 1);
+            animation: luxuryPulseRing 0.8s infinite cubic-bezier(0.1, 0.8, 0.1, 1);
           }
         `}} />
         
@@ -646,9 +641,9 @@ function Home() {
         <div className="text-center space-y-6 max-w-sm px-6 animate-fade-up">
           <div className="relative flex justify-center items-center">
             {/* Pulsing glow ring */}
-            <div className="absolute size-24 rounded-full border border-gold/30 animate-luxury-ring" />
-            <div className="absolute size-20 rounded-full border border-primary/20 animate-pulse" />
-            <span className="font-display text-xs tracking-[0.35em] text-gold uppercase">Atelier</span>
+            <div className="absolute size-24 rounded-full border border-gold/40 animate-luxury-ring" />
+            <div className="absolute size-20 rounded-full border border-primary/30 animate-pulse" />
+            <span className="font-display text-xs tracking-[0.35em] text-gold uppercase animate-pulse">Atelier</span>
           </div>
 
           <div className="space-y-2 pt-6">
@@ -659,9 +654,9 @@ function Home() {
           </div>
 
           <div className="pt-4 flex flex-col items-center gap-2">
-            <span className="text-[9px] tracking-[0.2em] uppercase text-muted-foreground animate-pulse">Entering Atelier...</span>
-            <div className="w-36 h-[2px] bg-border rounded-full overflow-hidden relative">
-              <div className="absolute top-0 left-0 h-full bg-gold w-1/2 animate-[shimmer_1.5s_infinite]"
+            <span className="text-[9px] tracking-[0.2em] uppercase text-muted-foreground animate-pulse">Loading Collection...</span>
+            <div className="w-36 h-[3px] bg-border rounded-full overflow-hidden relative">
+              <div className="absolute top-0 left-0 h-full bg-gold w-1/2 animate-[shimmer_0.8s_infinite]"
                    style={{ backgroundImage: "linear-gradient(90deg, transparent, var(--gold), transparent)" }} />
             </div>
           </div>
@@ -676,7 +671,7 @@ function Home() {
       {/* Top Luxury Progress Loader */}
       {isBoutiqueLoading && (
         <div
-          className="fixed top-0 left-0 h-[3px] bg-gradient-to-r from-gold via-primary to-gold z-50 transition-all duration-300 ease-out"
+          className="fixed top-0 left-0 h-[3.5px] bg-gradient-to-r from-gold via-primary to-gold z-50 transition-all duration-200 ease-out shadow-[0_0_8px_rgba(200,165,74,0.7)]"
           style={{ width: `${loadProgress}%` }}
         />
       )}
@@ -720,9 +715,9 @@ function Home() {
               <Menu className="size-5" />
             </button>
 
-            {/* Desktop Left Nav (First 4 items) */}
+            {/* Desktop Left Nav (First 3 items: Shop, Collections, Wedding) */}
             <nav className="hidden lg:flex items-center gap-5 xl:gap-7 text-[11px] xl:text-[12px] tracking-[0.14em] xl:tracking-[0.18em] uppercase text-foreground/75">
-              {NAV.slice(0, 4).map((n) => (
+              {NAV.slice(0, 3).map((n) => (
                 <a
                   key={n}
                   href={`#${n.toLowerCase().replace(" ", "-")}`}
@@ -745,9 +740,9 @@ function Home() {
 
           {/* Column 3: Right Desktop Nav + Icons */}
           <div className="justify-self-end flex items-center gap-4 xl:gap-6">
-            {/* Desktop Right Nav (Last 4 items) */}
+            {/* Desktop Right Nav (Last 2 items: About, Contact) */}
             <nav className="hidden lg:flex items-center gap-5 xl:gap-7 text-[11px] xl:text-[12px] tracking-[0.14em] xl:tracking-[0.18em] uppercase text-foreground/75">
-              {NAV.slice(4).map((n) => (
+              {NAV.slice(3).map((n) => (
                 <a
                   key={n}
                   href={`#${n.toLowerCase().replace(" ", "-")}`}
@@ -1787,8 +1782,8 @@ function Home() {
 
       {/* Fullscreen Hero */}
       <section className="relative isolate overflow-hidden">
-        <div className="grid lg:grid-cols-12 min-h-[92vh]">
-          <div className="lg:col-span-6 relative flex items-center px-6 md:px-12 lg:px-20 py-20">
+        <div className="grid lg:grid-cols-12 min-h-[60vh]">
+          <div className="lg:col-span-6 relative flex items-center px-6 md:px-12 lg:px-20 py-10">
             <div className="max-w-xl animate-fade-up">
               <span className="divider-gold">
                 <span className="divider-gold-line" /> The Heritage House
@@ -1806,7 +1801,7 @@ function Home() {
               <div className="mt-10 flex flex-wrap items-center gap-4">
                 <a
                   href="#shop"
-                  className="group inline-flex items-center gap-3 rounded-full bg-primary px-7 py-4 text-primary-foreground text-[12px] tracking-[0.25em] uppercase shadow-luxe hover:bg-primary/90 transition"
+                  className="group inline-flex items-center gap-3 rounded-full bg-primary px-7 py-4 text-[12px] tracking-[0.25em] uppercase shadow-luxe hover:bg-primary/90 transition"
                 >
                   Explore Collection
                   <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -1828,7 +1823,7 @@ function Home() {
             </div>
           </div>
 
-          <div className="lg:col-span-6 relative min-h-[60vh] lg:min-h-full">
+          <div className="lg:col-span-6 relative min-h-[40vh] lg:min-h-full">
             <div className="absolute inset-0 overflow-hidden lg:rounded-bl-[3rem]">
               <img
                 src={hero}
@@ -1880,7 +1875,7 @@ function Home() {
       </div>
 
       {/* Interactive AI recommendation Banner */}
-      <section className="bg-primary/5 py-12 border-b border-border/60">
+      <section className="bg-primary/5 py-6 border-b border-border/60">
         <div className="mx-auto max-w-7xl px-6 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-1.5 text-center md:text-left">
             <h3 className="font-display text-xl text-primary flex items-center gap-2 justify-center md:justify-start">
@@ -1901,7 +1896,7 @@ function Home() {
       </section>
 
       {/* Categories */}
-      <section id="collections" className="mx-auto max-w-7xl px-6 py-24 md:py-32">
+      <section id="collections" className="mx-auto max-w-7xl px-6 py-6 md:py-8">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14">
           <div>
             <span className="divider-gold">
@@ -1958,7 +1953,7 @@ function Home() {
       </section>
 
       {/* Interactive Shop Section with Sidebar Filters */}
-      <section id="shop" className="bg-ivory/70 border-y border-border/60 py-24 md:py-32">
+      <section id="shop" className="bg-ivory/70 border-y border-border/60 py-6 md:py-8">
         <div className="mx-auto max-w-7xl px-6">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-14">
             <div>
@@ -2191,7 +2186,7 @@ function Home() {
       </section>
 
       {/* Wedding banner */}
-      <section id="wedding" className="relative h-[80vh] min-h-[600px] overflow-hidden">
+      <section id="wedding" className="relative h-[55vh] min-h-[380px] overflow-hidden">
         <img
           src={weddingBanner}
           alt="Bride in candle-lit haveli wearing a Vastrika bridal saree"
@@ -2225,7 +2220,7 @@ function Home() {
       </section>
 
       {/* Interactive Fabric & Craft Guides */}
-      <section id="our-craft" className="mx-auto max-w-7xl px-6 py-24 md:py-32">
+      <section id="our-craft" className="mx-auto max-w-7xl px-6 py-6 md:py-8">
         <div className="grid lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-7 relative">
             <div className="overflow-hidden rounded-2xl shadow-soft">
@@ -2316,7 +2311,7 @@ function Home() {
       </section>
 
       {/* Why Vastrika */}
-      <section id="about" className="bg-ivory/70 border-y border-border/60 py-24">
+      <section id="about" className="bg-ivory/70 border-y border-border/60 py-6 md:py-8">
         <div className="mx-auto max-w-7xl px-6">
           <div className="text-center max-w-2xl mx-auto mb-14">
             <span className="divider-gold">
@@ -2341,7 +2336,7 @@ function Home() {
       </section>
 
       {/* Reviews */}
-      <section id="journal" className="mx-auto max-w-7xl px-6 py-24 md:py-32">
+      <section id="journal" className="mx-auto max-w-7xl px-6 py-6 md:py-8">
         <div className="text-center max-w-2xl mx-auto mb-14">
           <span className="divider-gold">
             <span className="divider-gold-line" /> The House Whispers
@@ -2376,7 +2371,7 @@ function Home() {
       </section>
 
       {/* Instagram */}
-      <section className="mx-auto max-w-7xl px-6 pb-24">
+      <section className="mx-auto max-w-7xl px-6 pb-6 md:pb-8">
         <div className="flex items-end justify-between mb-8">
           <div>
             <span className="divider-gold">
@@ -2414,7 +2409,7 @@ function Home() {
       </section>
 
       {/* Order Tracking Section */}
-      <section id="tracking-section" className="bg-card border-y border-border/60 py-16">
+      <section id="tracking-section" className="bg-card border-y border-border/60 py-6 md:py-8">
         <div className="mx-auto max-w-xl px-6 space-y-6">
           <div className="text-center space-y-2">
             <span className="divider-gold">
@@ -2450,8 +2445,8 @@ function Home() {
 
       {/* Newsletter */}
       <section className="relative overflow-hidden">
-        <div className="mx-auto max-w-7xl px-6 py-24">
-          <div className="relative rounded-3xl overflow-hidden border border-gold/30 bg-gradient-to-br from-primary to-[oklch(0.30_0.11_16)] text-ivory px-8 md:px-16 py-16 md:py-20 text-center">
+        <div className="mx-auto max-w-7xl px-6 py-6 md:py-8">
+          <div className="relative rounded-3xl overflow-hidden border border-gold/30 bg-gradient-to-br from-primary to-[oklch(0.30_0.11_16)] text-ivory px-8 md:px-16 py-8 md:py-10 text-center">
             <div className="absolute inset-0 opacity-[0.07] pointer-events-none"
                  style={{ backgroundImage: "radial-gradient(circle at 20% 20%, var(--gold) 1px, transparent 1px), radial-gradient(circle at 80% 60%, var(--gold) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
             <span className="divider-gold relative">
@@ -2487,7 +2482,7 @@ function Home() {
 
       {/* Footer */}
       <footer id="contact" className="bg-[oklch(0.22_0.012_30)] text-ivory/80">
-        <div className="mx-auto max-w-7xl px-6 py-20 grid md:grid-cols-2 lg:grid-cols-5 gap-12">
+        <div className="mx-auto max-w-7xl px-6 py-10 grid md:grid-cols-2 lg:grid-cols-5 gap-8">
           <div className="lg:col-span-2 space-y-4">
             <p className="font-display text-3xl tracking-[0.35em] text-ivory">VASTRIKA</p>
             <p className="text-[11px] tracking-[0.4em] uppercase text-gold mt-1">
