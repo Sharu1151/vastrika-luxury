@@ -298,6 +298,9 @@ const REVIEWS = [
 
 function Home() {
   const [scrolled, setScrolled] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadProgress, setLoadProgress] = useState(0);
+  const [isBoutiqueLoading, setIsBoutiqueLoading] = useState(false);
 
   // Interactivity States
   const [cart, setCart] = useState<{ product: typeof PRODUCTS[0]; quantity: number; color: string }[]>(() => {
@@ -393,6 +396,37 @@ function Home() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Preloader timeout
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Trigger top bar loader on filter and sorting changes
+  useEffect(() => {
+    if (isLoading) return;
+    
+    setIsBoutiqueLoading(true);
+    setLoadProgress(15);
+    const t1 = setTimeout(() => setLoadProgress(45), 150);
+    const t2 = setTimeout(() => setLoadProgress(75), 300);
+    const t3 = setTimeout(() => {
+      setLoadProgress(100);
+      setTimeout(() => {
+        setIsBoutiqueLoading(false);
+        setLoadProgress(0);
+      }, 150);
+    }, 450);
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
+  }, [selectedCategory, selectedColor, selectedFabric, selectedPriceRange, sortBy, isLoading]);
 
   const wa = (msg: string) =>
     `https://wa.me/919999999999?text=${encodeURIComponent(msg)}`;
@@ -583,9 +617,70 @@ function Home() {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 z-[100] bg-background flex flex-col items-center justify-center">
+        {/* Loader styles inline for safety */}
+        <style dangerouslySetInnerHTML={{__html: `
+          @keyframes luxuryPreloader {
+            0% { transform: scale(0.95); opacity: 0.7; }
+            50% { transform: scale(1.03); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.7; }
+          }
+          @keyframes luxuryPulseRing {
+            0% { transform: scale(0.8); opacity: 0.8; }
+            100% { transform: scale(1.4); opacity: 0; }
+          }
+          .animate-luxury-preloader {
+            animation: luxuryPreloader 2.5s infinite ease-in-out;
+          }
+          .animate-luxury-ring {
+            animation: luxuryPulseRing 2s infinite cubic-bezier(0.2, 0.8, 0.2, 1);
+          }
+        `}} />
+        
+        {/* Decorative backdrop patterns */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+             style={{ backgroundImage: "radial-gradient(circle at 50% 50%, var(--gold) 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
+        
+        <div className="text-center space-y-6 max-w-sm px-6 animate-fade-up">
+          <div className="relative flex justify-center items-center">
+            {/* Pulsing glow ring */}
+            <div className="absolute size-24 rounded-full border border-gold/30 animate-luxury-ring" />
+            <div className="absolute size-20 rounded-full border border-primary/20 animate-pulse" />
+            <span className="font-display text-xs tracking-[0.35em] text-gold uppercase">Atelier</span>
+          </div>
+
+          <div className="space-y-2 pt-6">
+            <h1 className="font-display text-4xl md:text-5xl tracking-[0.35em] text-primary animate-luxury-preloader">
+              VASTRIKA
+            </h1>
+            <p className="text-[10px] tracking-[0.35em] uppercase text-gold">Timeless Elegance</p>
+          </div>
+
+          <div className="pt-4 flex flex-col items-center gap-2">
+            <span className="text-[9px] tracking-[0.2em] uppercase text-muted-foreground animate-pulse">Entering Atelier...</span>
+            <div className="w-36 h-[2px] bg-border rounded-full overflow-hidden relative">
+              <div className="absolute top-0 left-0 h-full bg-gold w-1/2 animate-[shimmer_1.5s_infinite]"
+                   style={{ backgroundImage: "linear-gradient(90deg, transparent, var(--gold), transparent)" }} />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground relative overflow-x-hidden">
       
+      {/* Top Luxury Progress Loader */}
+      {isBoutiqueLoading && (
+        <div
+          className="fixed top-0 left-0 h-[3px] bg-gradient-to-r from-gold via-primary to-gold z-50 transition-all duration-300 ease-out"
+          style={{ width: `${loadProgress}%` }}
+        />
+      )}
+
       {/* Toast Notification */}
       <div
         className={`fixed bottom-6 left-6 z-[60] bg-primary text-primary-foreground border border-gold/40 px-6 py-4 rounded-xl shadow-luxe transition-all duration-500 max-w-sm flex items-center gap-3 ${
@@ -614,30 +709,33 @@ function Home() {
         }`}
       >
         <div className="mx-auto max-w-7xl px-6 py-4 grid grid-cols-3 items-center">
-          {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-7 text-[12px] tracking-[0.18em] uppercase text-foreground/70">
-            {NAV.map((n) => (
-              <a
-                key={n}
-                href={`#${n.toLowerCase().replace(" ", "-")}`}
-                className="hover:text-primary transition-colors relative group py-1"
-              >
-                {n}
-                <span className="absolute bottom-0 left-0 w-0 h-px bg-primary transition-all duration-300 group-hover:w-full" />
-              </a>
-            ))}
-          </nav>
-          
-          {/* Hamburger (Mobile) */}
-          <button
-            onClick={() => setIsMobileMenuOpen(true)}
-            className="lg:hidden justify-self-start text-foreground/80 hover:text-primary transition-colors"
-            aria-label="Open mobile menu"
-          >
-            <Menu className="size-5" />
-          </button>
+          {/* Column 1: Left Desktop Nav OR Mobile Hamburger */}
+          <div className="flex items-center">
+            {/* Hamburger (Mobile) */}
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="lg:hidden text-foreground/80 hover:text-primary transition-colors"
+              aria-label="Open mobile menu"
+            >
+              <Menu className="size-5" />
+            </button>
 
-          {/* Logo */}
+            {/* Desktop Left Nav (First 4 items) */}
+            <nav className="hidden lg:flex items-center gap-5 xl:gap-7 text-[11px] xl:text-[12px] tracking-[0.14em] xl:tracking-[0.18em] uppercase text-foreground/75">
+              {NAV.slice(0, 4).map((n) => (
+                <a
+                  key={n}
+                  href={`#${n.toLowerCase().replace(" ", "-")}`}
+                  className="hover:text-primary transition-colors relative group py-1"
+                >
+                  {n}
+                  <span className="absolute bottom-0 left-0 w-0 h-px bg-primary transition-all duration-300 group-hover:w-full" />
+                </a>
+              ))}
+            </nav>
+          </div>
+
+          {/* Column 2: Logo (Centered) */}
           <a
             href="#"
             className="justify-self-center font-display text-2xl md:text-3xl tracking-[0.35em] text-primary"
@@ -645,49 +743,69 @@ function Home() {
             VASTRIKA
           </a>
 
-          {/* Right Action Icons */}
-          <div className="justify-self-end flex items-center gap-5 text-foreground/70">
-            <button
-              onClick={() => setIsSearchOpen(true)}
-              className="hover:text-primary transition-colors"
-              aria-label="Search Collection"
-            >
-              <Search className="size-[18px]" />
-            </button>
-            <button
-              onClick={() => triggerToast("Direct account access is restricted. Connect with styling desk for custom credentials.")}
-              className="hidden md:inline-flex hover:text-primary transition-colors"
-              aria-label="User Account"
-            >
-              <User className="size-[18px]" />
-            </button>
-            <button
-              onClick={() => setIsWishlistOpen(true)}
-              className="hover:text-primary transition-colors relative"
-              aria-label="View Wishlist"
-            >
-              <Heart className="size-[18px]" />
-              {wishlist.length > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 size-3.5 grid place-items-center rounded-full bg-gold text-gold-foreground text-[8px] font-bold">
-                  {wishlist.length}
-                </span>
-              )}
-            </button>
-            <button
-              onClick={() => {
-                setCheckoutStep("cart");
-                setIsCartOpen(true);
-              }}
-              className="relative hover:text-primary transition-colors"
-              aria-label="Shopping Cart"
-            >
-              <ShoppingBag className="size-[18px]" />
-              {cart.length > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 size-3.5 grid place-items-center rounded-full bg-primary text-primary-foreground text-[8px] font-bold">
-                  {cart.reduce((s, i) => s + i.quantity, 0)}
-                </span>
-              )}
-            </button>
+          {/* Column 3: Right Desktop Nav + Icons */}
+          <div className="justify-self-end flex items-center gap-4 xl:gap-6">
+            {/* Desktop Right Nav (Last 4 items) */}
+            <nav className="hidden lg:flex items-center gap-5 xl:gap-7 text-[11px] xl:text-[12px] tracking-[0.14em] xl:tracking-[0.18em] uppercase text-foreground/75">
+              {NAV.slice(4).map((n) => (
+                <a
+                  key={n}
+                  href={`#${n.toLowerCase().replace(" ", "-")}`}
+                  className="hover:text-primary transition-colors relative group py-1"
+                >
+                  {n}
+                  <span className="absolute bottom-0 left-0 w-0 h-px bg-primary transition-all duration-300 group-hover:w-full" />
+                </a>
+              ))}
+            </nav>
+            
+            {/* Vertical Divider line */}
+            <span className="hidden lg:block h-4 w-px bg-border" />
+
+            {/* Action Icons */}
+            <div className="flex items-center gap-4 text-foreground/70">
+              <button
+                onClick={() => setIsSearchOpen(true)}
+                className="hover:text-primary transition-colors"
+                aria-label="Search Collection"
+              >
+                <Search className="size-[18px]" />
+              </button>
+              <button
+                onClick={() => triggerToast("Direct account access is restricted. Connect with styling desk for custom credentials.")}
+                className="hidden md:inline-flex hover:text-primary transition-colors"
+                aria-label="User Account"
+              >
+                <User className="size-[18px]" />
+              </button>
+              <button
+                onClick={() => setIsWishlistOpen(true)}
+                className="hover:text-primary transition-colors relative"
+                aria-label="View Wishlist"
+              >
+                <Heart className="size-[18px]" />
+                {wishlist.length > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 size-3.5 grid place-items-center rounded-full bg-gold text-gold-foreground text-[8px] font-bold">
+                    {wishlist.length}
+                  </span>
+                )}
+              </button>
+              <button
+                onClick={() => {
+                  setCheckoutStep("cart");
+                  setIsCartOpen(true);
+                }}
+                className="relative hover:text-primary transition-colors"
+                aria-label="Shopping Cart"
+              >
+                <ShoppingBag className="size-[18px]" />
+                {cart.length > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 size-3.5 grid place-items-center rounded-full bg-primary text-primary-foreground text-[8px] font-bold">
+                    {cart.reduce((s, i) => s + i.quantity, 0)}
+                  </span>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </header>
