@@ -615,50 +615,74 @@ function Home() {
   if (isLoading) {
     return (
       <div className="fixed inset-0 z-[100] bg-background flex flex-col items-center justify-center">
-        {/* Loader styles inline for safety */}
+        {/* Luxury top-class loader keyframe animations */}
         <style dangerouslySetInnerHTML={{__html: `
-          @keyframes luxuryPreloader {
-            0% { transform: scale(0.97); opacity: 0.8; }
-            50% { transform: scale(1.03); opacity: 1; filter: drop-shadow(0 0 12px rgba(200, 165, 74, 0.5)); }
-            100% { transform: scale(0.97); opacity: 0.8; }
+          @keyframes luxuryFadeIn {
+            0% { opacity: 0; transform: translateY(8px) scale(0.95); filter: blur(3px); }
+            100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+          }
+          @keyframes luxurySpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
           }
           @keyframes luxuryPulseRing {
-            0% { transform: scale(0.7); opacity: 0.9; border-width: 2px; }
-            100% { transform: scale(1.4); opacity: 0; border-width: 1px; }
+            0% { transform: scale(0.8); opacity: 0.8; }
+            100% { transform: scale(1.4); opacity: 0; }
           }
-          .animate-luxury-preloader {
-            animation: luxuryPreloader 1s infinite ease-in-out;
+          .animate-luxury-spin {
+            animation: luxurySpin 4s infinite linear;
           }
           .animate-luxury-ring {
-            animation: luxuryPulseRing 0.8s infinite cubic-bezier(0.1, 0.8, 0.1, 1);
+            animation: luxuryPulseRing 2s infinite cubic-bezier(0.1, 0.8, 0.2, 1);
           }
         `}} />
         
-        {/* Decorative backdrop patterns */}
+        {/* Fine luxury gold circular patterns in background */}
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
-             style={{ backgroundImage: "radial-gradient(circle at 50% 50%, var(--gold) 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
+             style={{ backgroundImage: "radial-gradient(circle at 50% 50%, var(--gold) 1.5px, transparent 1.5px)", backgroundSize: "24px 24px" }} />
         
-        <div className="text-center space-y-6 max-w-sm px-6 animate-fade-up">
+        <div className="text-center space-y-8 max-w-md px-6 flex flex-col items-center">
+          {/* Animated Gold Medallion Crest */}
           <div className="relative flex justify-center items-center">
-            {/* Pulsing glow ring */}
-            <div className="absolute size-24 rounded-full border border-gold/40 animate-luxury-ring" />
-            <div className="absolute size-20 rounded-full border border-primary/30 animate-pulse" />
-            <span className="font-display text-xs tracking-[0.35em] text-gold uppercase animate-pulse">Atelier</span>
+            {/* Pulsing ring */}
+            <div className="absolute size-24 rounded-full border border-gold/30 animate-luxury-ring" />
+            
+            {/* SVG Crest medallion */}
+            <svg className="size-20 text-gold animate-luxury-spin" viewBox="0 0 100 100" fill="none">
+              <circle cx="50" cy="50" r="45" stroke="currentColor" strokeWidth="1" strokeDasharray="3 3" />
+              <circle cx="50" cy="50" r="38" stroke="currentColor" strokeWidth="0.75" opacity="0.5" />
+              {/* Gold Flower Petals */}
+              <path d="M50 22 C56 34, 66 34, 50 50 C66 34, 66 44, 50 50 C50 66, 56 66, 50 50 C34 66, 34 56, 50 50 C34 50, 34 34, 50 50 Z" stroke="currentColor" strokeWidth="1" />
+              <circle cx="50" cy="50" r="3.5" fill="currentColor" />
+            </svg>
           </div>
 
-          <div className="space-y-2 pt-6">
-            <h1 className="font-display text-4xl md:text-5xl tracking-[0.35em] text-primary animate-luxury-preloader">
-              VASTRIKA
-            </h1>
-            <p className="text-[10px] tracking-[0.35em] uppercase text-gold">Timeless Elegance</p>
+          <div className="space-y-3">
+            {/* Staggered elegant letter fade-in of VASTRIKA */}
+            <div className="flex gap-2.5 justify-center items-center select-none">
+              {"VASTRIKA".split("").map((char, index) => (
+                <span 
+                  key={index} 
+                  style={{ animationDelay: `${index * 0.08}s` }}
+                  className="font-display text-3xl sm:text-4xl md:text-5xl tracking-[0.08em] text-primary opacity-0 animate-[luxuryFadeIn_0.8s_ease-out_forwards]"
+                >
+                  {char}
+                </span>
+              ))}
+            </div>
+            
+            <p className="text-[10px] tracking-[0.4em] uppercase text-gold/80 animate-pulse mt-1">
+              Timeless Elegance
+            </p>
           </div>
 
-          <div className="pt-4 flex flex-col items-center gap-2">
-            <span className="text-[9px] tracking-[0.2em] uppercase text-muted-foreground animate-pulse">Loading Collection...</span>
-            <div className="w-36 h-[3px] bg-border rounded-full overflow-hidden relative">
-              <div className="absolute top-0 left-0 h-full bg-gold w-1/2 animate-[shimmer_0.8s_infinite]"
+          {/* Luxury loading bar */}
+          <div className="pt-2 flex flex-col items-center gap-2">
+            <div className="w-36 h-[2px] bg-border rounded-full overflow-hidden relative">
+              <div className="absolute top-0 left-0 h-full bg-gold w-1/2 animate-[shimmer_1s_infinite]"
                    style={{ backgroundImage: "linear-gradient(90deg, transparent, var(--gold), transparent)" }} />
             </div>
+            <span className="text-[8px] tracking-[0.25em] uppercase text-muted-foreground/80">Handloom Atelier</span>
           </div>
         </div>
       </div>
