@@ -703,13 +703,13 @@ function Home() {
             : "bg-background/0"
         }`}
       >
-        <div className="mx-auto max-w-7xl px-6 py-4 grid grid-cols-3 items-center">
-          {/* Column 1: Left Desktop Nav OR Mobile Hamburger */}
+        <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between relative">
+          {/* Left Side: Mobile Hamburger & Left Desktop Nav */}
           <div className="flex items-center">
             {/* Hamburger (Mobile) */}
             <button
               onClick={() => setIsMobileMenuOpen(true)}
-              className="lg:hidden text-foreground/80 hover:text-primary transition-colors"
+              className="lg:hidden text-foreground/80 hover:text-primary transition-colors mr-4"
               aria-label="Open mobile menu"
             >
               <Menu className="size-5" />
@@ -730,16 +730,16 @@ function Home() {
             </nav>
           </div>
 
-          {/* Column 2: Logo (Centered) */}
+          {/* Center Logo: Absolute positioned for mathematically perfect centering and zero overlaps */}
           <a
             href="#"
-            className="justify-self-center font-display text-2xl md:text-3xl tracking-[0.35em] text-primary"
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-display text-lg sm:text-2xl md:text-3xl tracking-[0.2em] sm:tracking-[0.35em] text-primary"
           >
             VASTRIKA
           </a>
 
-          {/* Column 3: Right Desktop Nav + Icons */}
-          <div className="justify-self-end flex items-center gap-4 xl:gap-6">
+          {/* Right Side: Right Desktop Nav + Icons */}
+          <div className="flex items-center gap-4 xl:gap-6 z-10">
             {/* Desktop Right Nav (Last 2 items: About, Contact) */}
             <nav className="hidden lg:flex items-center gap-5 xl:gap-7 text-[11px] xl:text-[12px] tracking-[0.14em] xl:tracking-[0.18em] uppercase text-foreground/75">
               {NAV.slice(3).map((n) => (
@@ -758,7 +758,7 @@ function Home() {
             <span className="hidden lg:block h-4 w-px bg-border" />
 
             {/* Action Icons */}
-            <div className="flex items-center gap-4 text-foreground/70">
+            <div className="flex items-center gap-3 sm:gap-4 text-foreground/70">
               <button
                 onClick={() => setIsSearchOpen(true)}
                 className="hover:text-primary transition-colors"
@@ -1781,80 +1781,55 @@ function Home() {
       </div>
 
       {/* Fullscreen Hero */}
-      <section className="relative isolate overflow-hidden">
-        <div className="grid lg:grid-cols-12 min-h-[60vh]">
-          <div className="lg:col-span-6 relative flex items-center px-6 md:px-12 lg:px-20 py-10">
-            <div className="max-w-xl animate-fade-up">
-              <span className="divider-gold">
-                <span className="divider-gold-line" /> The Heritage House
-              </span>
-              <h1 className="mt-6 font-display text-[clamp(3rem,7vw,6.5rem)] leading-[0.95] text-primary">
-                Timeless<br />
-                <span className="italic font-normal">Elegance,</span><br />
-                Woven by Hand.
-              </h1>
-              <p className="mt-7 text-base md:text-lg text-muted-foreground leading-relaxed max-w-md">
-                Every thread tells a story of heritage, craftsmanship and quiet
-                luxury — sarees shaped on wooden looms across centuries-old
-                ateliers of India.
-              </p>
-              <div className="mt-10 flex flex-wrap items-center gap-4">
-                <a
-                  href="#shop"
-                  className="group inline-flex items-center gap-3 rounded-full bg-primary px-7 py-4 text-[12px] tracking-[0.25em] uppercase shadow-luxe hover:bg-primary/90 transition"
-                >
-                  Explore Collection
-                  <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                </a>
-                <a
-                  href="#shop"
-                  className="inline-flex items-center gap-2 px-2 py-4 text-[12px] tracking-[0.25em] uppercase border-b border-foreground/30 hover:border-primary hover:text-primary transition"
-                >
-                  Shop Now
-                </a>
-              </div>
-              <div className="mt-14 flex items-center gap-10">
-                <Stat n="120+" l="Master Artisans" />
-                <span className="h-10 w-px bg-border" />
-                <Stat n="40 yrs" l="Of Craft" />
-                <span className="h-10 w-px bg-border" />
-                <Stat n="60+" l="Countries" />
-              </div>
-            </div>
-          </div>
+      <section className="relative h-[75vh] min-h-[500px] overflow-hidden flex items-center">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <img
+            src={hero}
+            alt="Model in a maroon Banarasi silk saree inside a heritage palace"
+            className="w-full h-full object-cover object-center animate-slow-zoom"
+          />
+          {/* Dark luxury overlay for readability */}
+          <div className="absolute inset-0 bg-black/45 md:bg-black/35" />
+        </div>
 
-          <div className="lg:col-span-6 relative min-h-[40vh] lg:min-h-full">
-            <div className="absolute inset-0 overflow-hidden lg:rounded-bl-[3rem]">
-              <img
-                src={hero}
-                alt="Model in a maroon Banarasi silk saree inside a heritage palace"
-                width={1600}
-                height={1920}
-                fetchPriority="high"
-                className="h-full w-full object-cover animate-slow-zoom"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent" />
+        {/* Hero Content */}
+        <div className="relative mx-auto max-w-7xl px-6 w-full z-10 text-ivory">
+          <div className="max-w-xl space-y-5 animate-fade-up">
+            <span className="divider-gold">
+              <span className="divider-gold-line bg-gold" /> The Heritage House
+            </span>
+            <h1 className="font-display text-[clamp(2.2rem,6vw,4.5rem)] leading-[1.05] text-ivory">
+              Timeless<br />
+              <span className="italic font-normal text-gold">Elegance,</span><br />
+              Woven by Hand.
+            </h1>
+            <p className="text-xs md:text-sm text-ivory/80 leading-relaxed max-w-md">
+              Every thread tells a story of heritage, craftsmanship and quiet
+              luxury — sarees shaped on wooden looms across centuries-old
+              ateliers of India.
+            </p>
+            <div className="flex flex-wrap items-center gap-4 pt-2">
+              <a
+                href="#shop"
+                className="group inline-flex items-center gap-3 rounded-full bg-gold text-gold-foreground px-7 py-3.5 text-[11px] tracking-[0.25em] uppercase hover:bg-ivory hover:text-primary transition shadow-luxe"
+              >
+                Explore Collection
+                <ArrowUpRight className="size-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </a>
+              <a
+                href="#shop"
+                className="inline-flex items-center gap-2 px-2 py-3.5 text-[11px] tracking-[0.25em] uppercase border-b border-ivory/45 text-ivory hover:border-gold hover:text-gold transition"
+              >
+                Shop Now
+              </a>
             </div>
-            <div className="hidden lg:block absolute bottom-8 left-8 right-8">
-              <div className="rounded-2xl bg-background/70 backdrop-blur-md border border-border/70 p-5 flex items-center gap-4 shadow-soft">
-                <div className="size-12 rounded-xl overflow-hidden">
-                  <img src={p1} alt="" className="h-full w-full object-cover" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-[10px] tracking-[0.3em] uppercase text-gold">
-                    Now Showcasing
-                  </p>
-                  <p className="font-display text-lg text-primary leading-tight">
-                    The Royal Banarasi Edit
-                  </p>
-                </div>
-                <a
-                  href="#shop"
-                  className="text-[11px] tracking-[0.25em] uppercase text-primary hover:text-gold transition"
-                >
-                  View →
-                </a>
-              </div>
+            <div className="flex items-center gap-8 pt-4">
+              <StatLight n="120+" l="Master Weavers" />
+              <span className="h-8 w-px bg-ivory/20" />
+              <StatLight n="40 yrs" l="Of Heritage" />
+              <span className="h-8 w-px bg-ivory/20" />
+              <StatLight n="60+" l="Countries" />
             </div>
           </div>
         </div>
@@ -2583,6 +2558,17 @@ function Stat({ n, l }: { n: string; l: string }) {
     <div>
       <p className="font-display text-2xl text-primary">{n}</p>
       <p className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground mt-1">
+        {l}
+      </p>
+    </div>
+  );
+}
+
+function StatLight({ n, l }: { n: string; l: string }) {
+  return (
+    <div>
+      <p className="font-display text-xl text-gold">{n}</p>
+      <p className="text-[9px] tracking-[0.25em] uppercase text-ivory/70 mt-1">
         {l}
       </p>
     </div>
