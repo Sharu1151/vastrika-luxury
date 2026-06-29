@@ -666,7 +666,7 @@ function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground relative overflow-x-hidden">
+    <div className="min-h-screen bg-background text-foreground relative overflow-x-clip">
       
       {/* Top Luxury Progress Loader */}
       {isBoutiqueLoading && (
@@ -695,13 +695,9 @@ function Home() {
         </div>
       </div>
 
-      {/* Header */}
+      {/* Header (Always Solid Sticky Header for Premium legibility) */}
       <header
-        className={`sticky top-0 z-40 transition-all duration-500 ${
-          scrolled
-            ? "bg-background/85 backdrop-blur-xl border-b border-border/60"
-            : "bg-background/0"
-        }`}
+        className="sticky top-0 z-40 bg-background/90 backdrop-blur-xl border-b border-border/50 transition-all duration-300"
       >
         <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between relative">
           {/* Left Side: Mobile Hamburger & Left Desktop Nav */}
@@ -1912,14 +1908,15 @@ function Home() {
                 loading="lazy"
                 className="h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-110"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/0 to-black/0" />
+              {/* Deeper gradient overlay to ensure card text is extremely visible */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-5 md:p-6 text-ivory">
-                <p className="text-[10px] tracking-[0.35em] uppercase text-gold/90">
+                <p className="text-[10px] tracking-[0.35em] uppercase text-gold font-bold drop-shadow-[0_1px_3px_rgba(0,0,0,0.85)]">
                   {c.tag}
                 </p>
                 <div className="mt-1 flex items-end justify-between">
-                  <h3 className="font-display text-2xl md:text-3xl">{c.name}</h3>
-                  <ArrowUpRight className="size-5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition" />
+                  <h3 className="font-display text-2xl md:text-3xl text-ivory drop-shadow-[0_1px_4px_rgba(0,0,0,0.75)]">{c.name}</h3>
+                  <ArrowUpRight className="size-5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition text-ivory drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]" />
                 </div>
               </div>
             </a>
@@ -2457,7 +2454,7 @@ function Home() {
 
       {/* Footer */}
       <footer id="contact" className="bg-[oklch(0.22_0.012_30)] text-ivory/80">
-        <div className="mx-auto max-w-7xl px-6 py-10 grid md:grid-cols-2 lg:grid-cols-5 gap-8">
+        <div className="mx-auto max-w-7xl px-6 py-10 grid lg:grid-cols-5 gap-10">
           <div className="lg:col-span-2 space-y-4">
             <p className="font-display text-3xl tracking-[0.35em] text-ivory">VASTRIKA</p>
             <p className="text-[11px] tracking-[0.4em] uppercase text-gold mt-1">
@@ -2480,36 +2477,39 @@ function Home() {
             </div>
           </div>
 
-          {[
-            { h: "Atelier", l: ["Shop All", "New Arrivals", "Bestsellers", "Wedding", "Festive"] },
-            { h: "House", l: ["Our Craft", "About", "Journal", "Press", "Stores"] },
-            { h: "Care", l: ["Contact", "Shipping", "Returns", "Saree Care", "FAQ"] },
-          ].map((col) => (
-            <div key={col.h} className="space-y-4">
-              <p className="text-[11px] tracking-[0.35em] uppercase text-gold">{col.h}</p>
-              <ul className="space-y-3 text-sm">
-                {col.l.map((i) => (
-                  <li key={i}>
-                    <a
-                      href="#shop"
-                      onClick={() => {
-                        if (i === "New Arrivals") setSelectedCategory("New Arrivals");
-                        else if (i === "Bestsellers") setSelectedCategory("Bestsellers");
-                        else if (i === "Wedding") setSelectedCategory("Wedding");
-                        else if (i === "Festive") setSelectedCategory("Festive");
-                        else setSelectedCategory("All");
-                        const shopEl = document.getElementById("shop");
-                        if (shopEl) shopEl.scrollIntoView({ behavior: "smooth" });
-                      }}
-                      className="hover:text-ivory transition"
-                    >
-                      {i}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          {/* Links Section: side by side in a 2-column or 3-column layout on mobile */}
+          <div className="lg:col-span-3 grid grid-cols-2 sm:grid-cols-3 gap-8">
+            {[
+              { h: "Atelier", l: ["Shop All", "New Arrivals", "Bestsellers", "Wedding", "Festive"] },
+              { h: "House", l: ["Our Craft", "About", "Journal", "Press", "Stores"] },
+              { h: "Care", l: ["Contact", "Shipping", "Returns", "Saree Care", "FAQ"] },
+            ].map((col) => (
+              <div key={col.h} className="space-y-4">
+                <p className="text-[11px] tracking-[0.35em] uppercase text-gold">{col.h}</p>
+                <ul className="space-y-3 text-sm">
+                  {col.l.map((i) => (
+                    <li key={i}>
+                      <a
+                        href="#shop"
+                        onClick={() => {
+                          if (i === "New Arrivals") setSelectedCategory("New Arrivals");
+                          else if (i === "Bestsellers") setSelectedCategory("Bestsellers");
+                          else if (i === "Wedding") setSelectedCategory("Wedding");
+                          else if (i === "Festive") setSelectedCategory("Festive");
+                          else setSelectedCategory("All");
+                          const shopEl = document.getElementById("shop");
+                          if (shopEl) shopEl.scrollIntoView({ behavior: "smooth" });
+                        }}
+                        className="hover:text-ivory transition"
+                      >
+                        {i}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         </div>
         
         {/* Contact details explicitly */}
